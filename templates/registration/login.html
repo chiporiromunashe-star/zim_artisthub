@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Login — ArtistHub{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-visual"><span class="eyebrow">WELCOME BACK</span><h1>Your music.<br><em>Your space.</em></h1><p>Pick up where you left off and keep discovering independent artists.</p><div class="auth-orb">♪</div></div>
+  <section class="auth card"><span class="eyebrow">SIGN IN</span><h2>Log in to ArtistHub</h2><p class="auth-sub">Enter your account details to continue.</p>
+    <form method="post">
+      {% csrf_token %}
+      {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
+      <label>Username<input name="username" autocomplete="username" required></label>
+      <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+      <button class="btn full" type="submit">Log in</button>
+    </form>
+    <p class="auth-footer">New to ArtistHub? <a href="{% url 'register' %}">Create an account</a></p>
+  </section>
+</div>
+{% endblock %}

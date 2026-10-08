@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ genre }} — ArtistHub{% endblock %}
+{% block content %}
+<section class="page-intro">
+  <div><span class="eyebrow">GENRE</span><h1>{{ genre }}</h1><p>Fresh {{ genre }} releases from ArtistHub artists.</p></div>
+</section>
+<div class="music-list">
+{% for track in tracks %}
+  <article class="music-row">
+    <button class="row-cover" type="button" {% if track.is_premium %}data-premium-track="{{ track.id }}"{% else %}data-play-track="{{ track.id }}"{% endif %}>
+      {% if track.cover_art %}<img src="{{ track.cover_art.url }}" alt="" loading="lazy">{% else %}<span>♪</span>{% endif %}
+      <i>{% if track.is_premium %}↗{% else %}▶{% endif %}</i>
+    </button>
+    <div class="music-main"><div class="music-title"><strong>{{ track.title }}</strong><span class="pill {% if track.is_premium %}premium{% else %}free{% endif %}">{% if track.is_premium %}PREMIUM{% else %}FREE{% endif %}</span></div><a href="{% url 'artist_profile' track.artist.user.username %}">@{{ track.artist.user.username }}</a><small>{{ track.plays }} plays</small></div>
+    <span class="music-date">{{ track.created_at|date:"M d" }}</span>
+  </article>
+{% empty %}<div class="empty"><strong>No {{ genre }} tracks yet.</strong><span>Artists can select this genre when uploading.</span></div>{% endfor %}
+</div>
+{% endblock %}

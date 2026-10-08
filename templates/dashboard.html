@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Creator Studio — ArtistHub{% endblock %}
+{% block content %}
+<header class="dashboard-head">
+  <div class="dashboard-title-group"><span class="eyebrow">CREATOR STUDIO</span><h1>Welcome back, {{ user.get_short_name|default:user.username }}</h1><p class="dashboard-sub">Manage your releases, community and artist profile.</p></div>
+  <div class="actions"><a class="btn btn-ghost" href="{% url 'upload_post' %}">＋ Create post</a><a class="btn" href="{% url 'upload_track' %}">♪ Upload track</a></div>
+</header>
+
+<section class="stats">
+  <article class="stat-card"><div class="stat-header"><span>Followers</span><span class="stat-icon">◎</span></div><strong>{{ profile.followers.count }}</strong><span class="stat-footer">Your audience</span></article>
+  <article class="stat-card"><div class="stat-header"><span>Tracks</span><span class="stat-icon">♪</span></div><strong>{{ tracks|length }}</strong><span class="stat-footer">Published releases</span></article>
+  <article class="stat-card"><div class="stat-header"><span>Posts</span><span class="stat-icon">✦</span></div><strong>{{ posts|length }}</strong><span class="stat-footer">Community updates</span></article>
+</section>
+
+<div class="dashboard-grid">
+<section class="card profile-overview-card">
+  <div class="card-header"><div><span class="eyebrow">PUBLIC PRESENCE</span><h2>Your artist profile</h2><p class="section-sub">This is how fans see you.</p></div><a href="{% url 'artist_profile' user.username %}" class="text-link">View profile ↗</a></div>
+  <div class="profile-preview-body"><div class="profile-preview-avatar">{% if profile.avatar %}<img src="{{ profile.avatar.url }}" alt="{{ user.username }}">{% else %}<div class="placeholder-avatar">♪</div>{% endif %}</div><div class="profile-preview-details"><h3>{{ user.get_full_name|default:user.username }}</h3><p class="handle">@{{ user.username }}</p><p class="profile-bio-text">{% if profile.bio %}{{ profile.bio }}{% else %}<span class="muted-text">Add a short bio so fans know your sound and story.</span>{% endif %}</p></div></div>
+  <div class="card-footer"><a href="{% url 'edit_profile' %}" class="btn full">Edit profile & links</a></div>
+</section>
+
+<section class="card shortcuts-card">
+  <div class="card-header"><div><span class="eyebrow">QUICK ACTIONS</span><h2>Studio shortcuts</h2><p class="section-sub">Keep your artist page fresh.</p></div></div>
+  <ul class="shortcut-list">
+    <li><a href="{% url 'upload_track' %}" class="shortcut-item"><span class="shortcut-icon">♪</span><span class="shortcut-info"><strong>Release music</strong><span>Upload audio, cover art, genre and external links</span></span><span class="arrow">→</span></a></li>
+    <li><a href="{% url 'upload_post' %}" class="shortcut-item"><span class="shortcut-icon">✦</span><span class="shortcut-info"><strong>Share an update</strong><span>Post photos, videos or announcements</span></span><span class="arrow">→</span></a></li>
+    <li><a href="{% url 'edit_profile' %}" class="shortcut-item"><span class="shortcut-icon">◈</span><span class="shortcut-info"><strong>Customize profile</strong><span>Update your banner, avatar and music links</span></span><span class="arrow">→</span></a></li>
+  </ul>
+</section>
+</div>
+{% endblock %}

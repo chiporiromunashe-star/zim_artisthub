@@ -1,0 +1,7 @@
+Keep core/migrations/0001_initial.py unchanged.
+After replacing the models, Django should generate the next migration locally:
+
+python manage.py makemigrations
+python manage.py migrate
+
+Do not manually edit 0001_initial.py.

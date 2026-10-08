@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Weekly Trends — ArtistHub{% endblock %}
+{% block content %}
+<section class="page-intro">
+  <div><span class="eyebrow">CHARTS</span><h1>Weekly Trends</h1>{% if weekly_trend %}<p>{{ weekly_trend.week_start|date:"M d" }} – {{ weekly_trend.week_end|date:"M d, Y" }} · ranked by ArtistHub editors.</p>{% else %}<p>The weekly chart is being prepared. Check back soon.</p>{% endif %}</div>
+</section>
+{% if weekly_trend %}
+<div class="chart-list chart-page">
+{% for item in weekly_trend.songs.all %}
+  <button class="chart-row" type="button" {% if item.track.is_premium %}data-premium-track="{{ item.track.id }}"{% else %}data-play-track="{{ item.track.id }}"{% endif %}>
+    <span class="rank large">#{{ item.rank }}</span>
+    <span class="chart-cover">{% if item.track.cover_art %}<img src="{{ item.track.cover_art.url }}" alt="" loading="lazy">{% else %}♪{% endif %}</span>
+    <span class="chart-info"><strong>{{ item.track.title }}</strong><small>@{{ item.track.artist.user.username }} · {{ item.track.get_genre_display }} · {{ item.track.plays }} plays</small></span>
+    <span class="chart-action">{% if item.track.is_premium %}↗{% else %}▶{% endif %}</span>
+  </button>
+{% empty %}<div class="empty"><strong>No chart entries yet.</strong><span>Add ranked songs from Django Admin.</span></div>{% endfor %}
+</div>
+{% else %}
+<div class="empty"><strong>No active weekly chart.</strong><span>Create one in Django Admin and mark it active.</span></div>
+{% endif %}
+{% endblock %}

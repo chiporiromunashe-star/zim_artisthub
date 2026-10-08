@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Discover — ArtistHub{% endblock %}
+{% block content %}
+<section class="page-intro">
+  <div>
+    <span class="eyebrow">DISCOVER</span>
+    <h1>Find your next favourite artist.</h1>
+    <p>Explore independent creators, follow their work and discover new sounds.</p>
+  </div>
+  <div class="intro-stat"><strong>{{ artists|length }}</strong><span>{% if query %}matching artists{% else %}artists to discover{% endif %}</span></div>
+</section>
+
+{% if query %}
+<div class="search-result-note">Showing results for <strong>{{ query }}</strong> <a href="{% url 'discover' %}">Clear</a></div>
+{% endif %}
+
+<section class="artist-grid">
+{% for artist in artists %}
+<a class="artist-card" href="{{ artist.get_absolute_url }}">
+  <div class="artist-card-image">{% if artist.avatar %}<img src="{{ artist.avatar.url }}" alt="{{ artist.user.username }}">{% else %}<div class="avatar placeholder">♪</div>{% endif %}</div>
+  <div class="artist-card-info">
+    <div class="artist-name-row"><h3>{{ artist.user.get_full_name|default:artist.user.username }}</h3><span>↗</span></div>
+    <p>@{{ artist.user.username }}</p>
+    <div class="artist-stats"><span>{{ artist.followers.count }} followers</span><span>Artist</span></div>
+  </div>
+</a>
+{% empty %}
+<div class="empty"><strong>No artists found.</strong><span>{% if query %}Try another search term.{% else %}Artist profiles will appear here when creators join.{% endif %}</span></div>
+{% endfor %}
+</section>
+{% endblock %}

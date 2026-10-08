@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta name="description" content="ArtistHub — discover independent music and artists.">
+  <title>{% block title %}ArtistHub{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <script>
+    (() => {
+      const saved = localStorage.getItem("artisthub-theme");
+      document.documentElement.dataset.theme = saved || "dark";
+    })();
+  </script>
+ <style>
+  /* 1. Base text scaling across standard tags */
+  body, p, a, span, button, li, input, div {
+    font-size: 16.4px !important;
+  }
+
+  /* 2. Headings */
+  h1 { font-size: 2.25rem !important; }
+  h2 { font-size: 1.75rem !important; }
+  h3 { font-size: 1.35rem !important; }
+
+  /* 3. Keep small labels and metadata balanced */
+  small, .text-xs, .text-sm, .metadata, .footer-text {
+    font-size: 14px !important;
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar>
+    <div class="sidebar-brand-row">
+      <a class="brand" href="{% url 'feed' %}" aria-label="ArtistHub home">
+        <span class="brand-mark">A</span>
+        <span>Artist<span class="brand-accent">Hub</span></span>
+      </a>
+      <button class="sidebar-close" type="button" data-sidebar-close aria-label="Close navigation">×</button>
+    </div>
+
+    <div class="sidebar-section">
+      <span class="sidebar-label">BROWSE MUSIC</span>
+      <a class="side-link" href="{% url 'feed' %}"><span>⌂</span> Home</a>
+      <a class="side-link" href="{% url 'discover' %}"><span>⌕</span> Discover</a>
+      <a class="side-link" href="{% url 'weekly_trends' %}"><span>≡</span> Charts</a>
+      <a class="side-link" href="{% url 'genre_tracks' 'hiphop' %}"><span>♫</span> Genres</a>
+    </div>
+
+    <div class="sidebar-section">
+      <span class="sidebar-label">LIBRARY</span>
+      <a class="side-link muted" href="{% url 'feed' %}#latest"><span>◷</span> Latest music</a>
+      <a class="side-link muted" href="{% url 'weekly_trends' %}"><span>★</span> Weekly trends</a>
+      {% if user.is_authenticated %}
+        <a class="side-link muted" href="{% url 'dashboard' %}"><span>◎</span> Studio</a>
+      {% endif %}
+    </div>
+
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-bottom">
+      {% if user.is_authenticated %}
+        <div class="sidebar-user">
+          <span class="sidebar-user-avatar">{{ user.username|first|upper }}</span>
+          <div><strong>@{{ user.username }}</strong><small>Signed in</small></div>
+        </div>
+        <a class="side-link" href="{% url 'logout' %}"><span>↪</span> Log out</a>
+      {% else %}
+        <a class="side-link" href="{% url 'login' %}"><span>↪</span> Log in</a>
+        <a class="side-join" href="{% url 'register' %}">Create an account</a>
+      {% endif %}
+    </div>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu" type="button" data-sidebar-open aria-label="Open navigation" aria-expanded="false">☰</button>
+        <span class="breadcrumb">ArtistHub <span>›</span> {% block breadcrumb %}Home{% endblock %}</span>
+      </div>
+
+      <form class="search" action="{% url 'discover' %}" method="get" role="search">
+        <span class="search-icon">⌕</span>
+        <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search artists, tracks..." aria-label="Search artists and tracks">
+        <kbd>/</kbd>
+      </form>
+
+      <div class="topbar-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme"><span data-theme-icon>☀</span></button>
+        {% if user.is_authenticated %}
+          <a class="profile-chip" href="{% url 'dashboard' %}"><span>{{ user.username|first|upper }}</span><strong>{{ user.username }}</strong></a>
+        {% else %}
+          <a class="btn btn-sm" href="{% url 'register' %}">Join free</a>
+        {% endif %}
+      </div>
+    </header>
+
+    <main class="container">
+      {% if messages %}
+        <div class="flash-stack" aria-live="polite">
+          {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}"><span>{{ message }}</span><span class="message-dot"></span></div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div><strong>ArtistHub</strong><span>Discover independent music and artists.</span></div>
+      <span>© 2026 ArtistHub</span>
+    </footer>
+  </div>
+</div>
+
+<section class="audio-player" data-audio-player aria-label="Music player" hidden>
+  <div class="player-track">
+    <div class="player-cover"><img data-player-cover alt="" hidden><span data-player-placeholder>♪</span></div>
+    <div class="player-meta"><strong data-player-title>Select a free song</strong><span data-player-artist>ArtistHub</span></div>
+  </div>
+  <div class="player-controls">
+    <button type="button" class="player-icon" data-player-prev aria-label="Previous track">⏮</button>
+    <button type="button" class="player-main" data-player-toggle aria-label="Play">▶</button>
+    <button type="button" class="player-icon" data-player-next aria-label="Next track">⏭</button>
+  </div>
+  <div class="player-progress">
+    <span data-player-current>0:00</span>
+    <input type="range" data-player-seek min="0" max="100" value="0" step="0.1" aria-label="Song progress">
+    <span data-player-duration>0:00</span>
+  </div>
+  <div class="player-volume">
+    <span>🔊</span><input type="range" data-player-volume min="0" max="1" value="1" step="0.05" aria-label="Volume">
+  </div>
+  <button type="button" class="player-close" data-player-close aria-label="Close player">×</button>
+  <audio data-audio-element preload="metadata"></audio>
+</section>
+
+<div class="modal-backdrop" data-premium-modal hidden>
+  <section class="premium-modal" role="dialog" aria-modal="true" aria-labelledby="premium-title">
+    <button class="modal-close" type="button" data-premium-close aria-label="Close">×</button>
+    <div class="premium-icon">↗</div>
+    <span class="eyebrow">LISTEN EXTERNALLY</span>
+    <h2 id="premium-title" data-premium-title>Premium content</h2>
+    <p>This release is marked premium by the artist. Choose an external platform to listen.</p>
+    <div class="external-links">
+      <a class="external-link youtube" data-premium-youtube target="_blank" rel="noopener" hidden>YouTube <span>↗</span></a>
+      <a class="external-link audiomack" data-premium-audiomack target="_blank" rel="noopener" hidden>Audiomack <span>↗</span></a>
+      <a class="external-link spotify" data-premium-spotify target="_blank" rel="noopener" hidden>Spotify <span>↗</span></a>
+    </div>
+    <p class="modal-note">No payment is handled inside ArtistHub.</p>
+  </section>
+</div>
+
+<script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

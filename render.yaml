@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: artisthub
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn artisthub.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        sync: false
+      - key: RENDER_EXTERNAL_HOSTNAME
+        sync: false
+      - key: RENDER_EXTERNAL_URL
+        sync: false

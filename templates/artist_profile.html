@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}@{{ profile.user.username }} — ArtistHub{% endblock %}
+{% block content %}
+<section class="profile-hero" {% if profile.banner %}style="background-image:url('{{ profile.banner.url }}')"{% endif %}>
+  <div class="profile-overlay"></div>
+  <div class="profile-hero-gradient"></div>
+</section>
+
+<section class="profile-head">
+  <div class="avatar-wrapper">
+    {% if profile.avatar %}<img class="profile-avatar" src="{{ profile.avatar.url }}" alt="{{ profile.user.username }}">{% else %}<div class="profile-avatar placeholder">♪</div>{% endif %}
+  </div>
+  <div class="profile-info">
+    <span class="eyebrow">ARTIST PROFILE</span>
+    <h1>{{ profile.user.get_full_name|default:profile.user.username }}</h1>
+    <div class="profile-meta"><span>@{{ profile.user.username }}</span><span>•</span><strong>{{ profile.followers.count }}</strong><span>followers</span></div>
+    <p class="profile-bio">{% if profile.bio %}{{ profile.bio }}{% else %}This artist hasn't added a bio yet.{% endif %}</p>
+  </div>
+  {% if user.is_authenticated and user != profile.user %}
+    <form method="post" action="{% url 'follow_toggle' profile.user.username %}">
+      {% csrf_token %}
+      <button class="btn {% if is_following %}btn-ghost{% endif %}" type="submit">{% if is_following %}Following{% else %}Follow artist{% endif %}</button>
+    </form>
+  {% endif %}
+</section>
+
+<div class="profile-links">
+  {% if profile.spotify_url %}<a href="{{ profile.spotify_url }}" target="_blank" rel="noopener">Spotify ↗</a>{% endif %}
+  {% if profile.youtube_url %}<a href="{{ profile.youtube_url }}" target="_blank" rel="noopener">YouTube ↗</a>{% endif %}
+  {% if profile.audiomack_url %}<a href="{{ profile.audiomack_url }}" target="_blank" rel="noopener">Audiomack ↗</a>{% endif %}
+</div>
+
+<section class="section-block">
+  <div class="section-head"><div><span class="eyebrow">MUSIC</span><h2>Releases</h2><p class="section-sub">Free music plays here. Premium releases open external listening options.</p></div></div>
+  <div class="music-list">
+    {% for track in tracks %}
+      <article class="music-row">
+        <button class="row-cover" type="button" {% if track.is_premium %}data-premium-track="{{ track.id }}"{% else %}data-play-track="{{ track.id }}"{% endif %}>
+          {% if track.cover_art %}<img src="{{ track.cover_art.url }}" alt="" loading="lazy">{% else %}<span>♪</span>{% endif %}
+          <i>{% if track.is_premium %}↗{% else %}▶{% endif %}</i>
+        </button>
+        <div class="music-main">
+          <div class="music-title"><strong>{{ track.title }}</strong><span class="pill {% if track.is_premium %}premium{% else %}free{% endif %}">{% if track.is_premium %}PREMIUM{% else %}FREE{% endif %}</span></div>
+          <span>@{{ profile.user.username }}</span><small>{{ track.get_genre_display }} · {{ track.plays }} plays</small>
+        </div>
+        <span class="music-date">{{ track.created_at|date:"M d, Y" }}</span>
+      </article>
+    {% empty %}
+      <div class="empty"><strong>No music uploaded yet.</strong></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section-block">
+  <div class="section-head"><div><span class="eyebrow">UPDATES</span><h2>Recent posts</h2></div></div>
+  <div class="posts">
+    {% for post in posts %}
+      <article class="post card">
+        <div class="post-top"><div class="post-author"><span class="mini-avatar">{% if profile.avatar %}<img src="{{ profile.avatar.url }}" alt="">{% else %}♪{% endif %}</span><div><strong>@{{ profile.user.username }}</strong><small>{{ post.created_at|date:"M d, Y" }}</small></div></div>{% if post.is_premium %}<span class="pill premium">PREMIUM</span>{% endif %}</div>
+        {% if post.caption %}<p class="post-caption">{{ post.caption }}</p>{% endif %}
+        {% if post.is_premium %}
+          <button class="premium-post-card" type="button" data-premium-post="{{ post.id }}"><span>🔒</span><strong>Premium post</strong><small>Open the artist's external listening platforms</small></button>
+        {% elif post.media_file %}
+          <div class="post-media">{% if post.is_video %}<video controls src="{{ post.media_file.url }}" preload="metadata"></video>{% else %}<img src="{{ post.media_file.url }}" alt="Post media" loading="lazy">{% endif %}</div>
+        {% endif %}
+      </article>
+    {% empty %}<div class="empty"><strong>No posts published yet.</strong></div>{% endfor %}
+  </div>
+</section>
+{% endblock %}
