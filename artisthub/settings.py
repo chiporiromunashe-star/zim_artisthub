@@ -172,11 +172,11 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
 # The exact name of your public bucket
-AWS_STORAGE_BUCKET_NAME = 'zim_artisthub' 
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 
 # Your specific Supabase region and endpoint
-AWS_S3_REGION_NAME = 'eu-west-1'
-AWS_S3_ENDPOINT_URL = 'https://fswaixteajxrsmddwdxu.storage.supabase.co/storage/v1/s3'
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN')
 
 # Tell Django to use this storage for all uploaded media files
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
