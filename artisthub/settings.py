@@ -167,3 +167,19 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    # --- Supabase Storage Configuration ---
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+# The exact name of your public bucket
+AWS_STORAGE_BUCKET_NAME = 'zim_artisthub' 
+
+# Your specific Supabase region and endpoint
+AWS_S3_REGION_NAME = 'eu-west-1'
+AWS_S3_ENDPOINT_URL = 'https://fswaixteajxrsmddwdxu.storage.supabase.co/storage/v1/s3'
+
+# Tell Django to use this storage for all uploaded media files
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Removes temporary signature tokens from the ends of your image URLs
+AWS_QUERYSTRING_AUTH = False
