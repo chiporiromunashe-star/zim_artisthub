@@ -56,12 +56,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Apple Music Dynamic Gradient Extraction Function ---
   const applyAppleGradient = () => {
     if (!coverEl || coverEl.hidden || !coverEl.src) {
-      player.style.removeProperty("background");
+      player.style.removeProperty("--dynamic-player-bg");
       return;
     }
 
     const img = new Image();
-    img.crossOrigin = "Anonymous";
+    img.crossOrigin = "anonymous";
     img.src = coverEl.src;
 
     img.onload = () => {
@@ -77,16 +77,27 @@ document.addEventListener("DOMContentLoaded", () => {
         const centerData = ctx.getImageData(25, 25, 1, 1).data;
 
         const color1 = `rgb(${topData[0]}, ${topData[1]}, ${topData[2]})`;
-        const color2 = `rgb(${Math.floor(centerData[0] * 0.3)}, ${Math.floor(centerData[1] * 0.3)}, ${Math.floor(centerData[2] * 0.3)})`;
+        const color2 = `rgb(${Math.floor(centerData[0] * 0.25)}, ${Math.floor(centerData[1] * 0.25)}, ${Math.floor(centerData[2] * 0.25)})`;
 
-        player.style.background = `
-          radial-gradient(circle at 50% 30%, ${color1} 0%, ${color2} 85%),
-          linear-gradient(180deg, ${color1} 0%, #121215 100%)
-        `;
-        player.style.backgroundBlendMode = "screen";
+        player.style.setProperty(
+          "--dynamic-player-bg",
+          `radial-gradient(circle at 50% 30%, ${color1} 0%, ${color2} 85%), linear-gradient(180deg, ${color1} 0%, #121215 100%)`
+        );
       } catch (e) {
-        player.style.removeProperty("background");
+        // Fallback on CORS or canvas errors
+        player.style.setProperty(
+          "--dynamic-player-bg",
+          `radial-gradient(circle at 50% 30%, rgba(249,115,22,0.25) 0%, #121215 85%)`
+        );
       }
+    };
+
+    // Handle missing/broken images (e.g., 404 errors)
+    img.onerror = () => {
+      player.style.setProperty(
+        "--dynamic-player-bg",
+        `radial-gradient(circle at 50% 30%, rgba(249,115,22,0.25) 0%, #121215 85%)`
+      );
     };
   };
 
@@ -100,20 +111,4 @@ document.addEventListener("DOMContentLoaded", () => {
   const setCover = (url) => {
     if (url) {
       coverEl.src = url;
-      coverEl.hidden = false;
-      placeholderEl.hidden = true;
-      applyAppleGradient();
-    } else {
-      coverEl.removeAttribute("src");
-      coverEl.hidden = true;
-      placeholderEl.hidden = false;
-      player.style.removeProperty("background");
-    }
-  };
-
-  const refreshQueue = () => {
-    queue = [...new Set([...document.querySelectorAll("[data-play-track]")].map(el => el.dataset.playTrack).filter(Boolean))];
-  };
-
-  const setPlayingState = (id) => {
-    document.querySelectorAll
+      
