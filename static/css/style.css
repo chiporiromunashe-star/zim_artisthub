@@ -220,6 +220,140 @@ html[data-theme="light"] .genre-chip.active{background:#161616;color:#fff;border
 .empty-state{min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px dashed var(--ah-border);border-radius:12px;padding:30px;color:var(--ah-muted)}.empty-state .empty-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:#171719;color:var(--ah-accent);font-size:21px;margin-bottom:13px}.empty-state strong{font-size:13px;color:var(--ah-soft)}.empty-state span{max-width:390px;font-size:10px;margin:5px 0 14px}
 .rail-card{border:1px solid var(--ah-border);border-radius:12px;background:#101011;padding:15px}.rail-head{display:flex;align-items:start;justify-content:space-between;gap:10px;margin-bottom:14px}.rail-head h3{font:800 15px Manrope;margin:4px 0 0}.rail-head>a{font-size:9px;color:var(--ah-accent-2);text-decoration:none}.rail-now-playing{text-align:center}.rail-art{width:145px;height:145px;margin:4px auto 13px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(145deg,#25201b,#121214);border:1px solid var(--ah-border);font-size:43px;color:#6f6f75}.rail-now-playing>strong,.rail-now-playing>span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rail-now-playing>strong{font-size:11px}.rail-now-playing>span{font-size:9px;color:#6b6b71;margin-top:3px}.rail-wave{height:38px;display:flex;align-items:center;justify-content:center;gap:3px;margin-top:13px}.rail-wave i{display:block;width:3px;height:12px;border-radius:4px;background:#3a3a3e}.rail-wave i:nth-child(2),.rail-wave i:nth-child(8){height:22px}.rail-wave i:nth-child(3),.rail-wave i:nth-child(7){height:30px}.rail-wave i:nth-child(4),.rail-wave i:nth-child(6){height:18px}.rail-wave i:nth-child(5){height:34px;background:var(--ah-accent)}
 .rail-track{width:100%;display:grid;grid-template-columns:24px 39px minmax(0,1fr) 22px;gap:8px;align-items:center;border:0;background:none;color:var(--ah-text);text-align:left;padding:7px 0;border-radius:7px;cursor:pointer}.rail-track:hover{background:rgba(255,255,255,.04)}.rail-rank{font-size:9px;color:#626267;text-align:center}.rail-thumb{width:39px;height:39px;display:grid;place-items:center;border-radius:6px;overflow:hidden;background:#1a1a1c;color:#85858b}.rail-thumb img{width:100%;height:100%;object-fit:cover}.rail-track strong,.rail-track small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rail-track strong{font-size:10px}.rail-track small{font-size:8px;color:#68686e;margin-top:2px}.rail-play{text-align:right;font-size:11px;color:var(--ah-accent-2)}.rail-empty{padding:20px 4px;text-align:center;color:#68686e;font-size:10px}.rail-help h3{font:800 18px/1.15 Manrope;margin:7px 0}.rail-help p{color:#77777d;font-size:10px;line-height:1.7;margin:0 0 14px}.rail-help .btn{min-height:34px;font-size:10px}
+/* ==========================================
+   NEW AUDIOMACK STYLE PLAYER
+   ========================================== */
+.audio-player.audiomack-style {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: #0d0d0e;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 24px 36px;
+  overflow-y: auto;
+}
+
+.player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.player-header-title {
+  text-align: center;
+}
+
+.player-header-title small {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #88888e;
+  letter-spacing: 0.5px;
+}
+
+.player-artwork {
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 1 / 1;
+  margin: 16px auto;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #1a1a1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-artwork img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.player-placeholder-art {
+  font-size: 64px;
+  color: #444;
+}
+
+.player-info {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.player-artist-name {
+  color: #a0a0ab;
+  font-size: 15px;
+}
+
+.player-song-title {
+  font-size: 22px !important;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.player-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px !important;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.action-btn.accent {
+  background: #ff8c00;
+  color: #000;
+  border: none;
+}
+
+.player-progress-container {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.player-timestamps {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px !important;
+  color: #88888e;
+  margin-top: 6px;
+}
+
+.player-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.player-main-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #000;
+  border: none;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 
 .audio-player{position:fixed;z-index:120;left:calc(var(--ah-sidebar) + (100vw - var(--ah-sidebar))/2);bottom:14px;transform:translateX(-50%);width:min(930px,calc(100vw - var(--ah-sidebar) - 44px));display:grid;grid-template-columns:190px 125px minmax(180px,1fr) 115px 25px;align-items:center;gap:14px;padding:9px 12px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(20,20,22,.97);box-shadow:0 18px 50px rgba(0,0,0,.5);backdrop-filter:blur(18px)}
 .player-cover{width:42px;height:42px;border-radius:6px;background:#242426}.player-meta strong{font-size:10px}.player-meta span{font-size:8px}.player-controls{gap:8px}.player-icon{font-size:12px}.player-main{width:34px;height:34px;font-size:11px;background:#f1f1f1;color:#111;box-shadow:none}.player-progress{gap:7px}.player-progress span{font-size:8px}.player-volume{font-size:9px}.player-volume input{width:70px}.player-close{font-size:19px}.audio-player[hidden]{display:none}
