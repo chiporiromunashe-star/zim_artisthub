@@ -141,17 +141,15 @@
     <h2 class="player-song-title" data-player-title>Track Title</h2>
   </div>
 
-  <!-- Action Buttons Row (Like, Playlist, Download) -->
+  <!-- Action Buttons Row (Download button removed) -->
   <div class="player-actions">
     <button type="button" class="action-btn">♡ Like</button>
     <button type="button" class="action-btn">≡+ Playlist</button>
-    <button type="button" class="action-btn accent">✓ Downloaded</button>
   </div>
 
-  <!-- Waveform / Progress Bar -->
+  <!-- Progress Bar -->
   <div class="player-progress-container">
     <div class="player-waveform-wrap">
-      <!-- Standard range seek bar styled as a full-width waveform track -->
       <input type="range" data-player-seek min="0" max="100" value="0" step="0.1" aria-label="Song progress">
     </div>
     <div class="player-timestamps">
@@ -171,7 +169,6 @@
 
   <audio data-audio-element preload="metadata"></audio>
 </section>
-
 
 <div class="modal-backdrop" data-premium-modal hidden>
   <section class="premium-modal" role="dialog" aria-modal="true" aria-labelledby="premium-title">
