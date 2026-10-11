@@ -53,6 +53,43 @@ document.addEventListener("DOMContentLoaded", () => {
   let queue = [];
   let currentIndex = -1;
 
+  // --- Apple Music Dynamic Gradient Extraction Function ---
+  const applyAppleGradient = () => {
+    if (!coverEl || coverEl.hidden || !coverEl.src) {
+      player.style.removeProperty("background");
+      return;
+    }
+
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = coverEl.src;
+
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = 50;
+        canvas.height = 50;
+        ctx.drawImage(img, 0, 0, 50, 50);
+
+        // Sample top-middle area for top color, center for accent
+        const topData = ctx.getImageData(25, 10, 1, 1).data;
+        const centerData = ctx.getImageData(25, 25, 1, 1).data;
+
+        const color1 = `rgb(${topData[0]}, ${topData[1]}, ${topData[2]})`;
+        const color2 = `rgb(${Math.floor(centerData[0] * 0.3)}, ${Math.floor(centerData[1] * 0.3)}, ${Math.floor(centerData[2] * 0.3)})`;
+
+        player.style.background = `
+          radial-gradient(circle at 50% 30%, ${color1} 0%, ${color2} 85%),
+          linear-gradient(180deg, ${color1} 0%, #121215 100%)
+        `;
+        player.style.backgroundBlendMode = "screen";
+      } catch (e) {
+        player.style.removeProperty("background");
+      }
+    };
+  };
+
   const formatTime = (seconds) => {
     if (!Number.isFinite(seconds)) return "0:00";
     const minutes = Math.floor(seconds / 60);
@@ -65,10 +102,12 @@ document.addEventListener("DOMContentLoaded", () => {
       coverEl.src = url;
       coverEl.hidden = false;
       placeholderEl.hidden = true;
+      applyAppleGradient();
     } else {
       coverEl.removeAttribute("src");
       coverEl.hidden = true;
       placeholderEl.hidden = false;
+      player.style.removeProperty("background");
     }
   };
 
@@ -77,198 +116,4 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const setPlayingState = (id) => {
-    document.querySelectorAll("[data-play-track]").forEach(el => el.classList.remove("is-playing"));
-    document.querySelectorAll(`[data-play-track="${id}"]`).forEach(el => el.classList.add("is-playing"));
-  };
-
-  const showError = (message) => {
-    window.setTimeout(() => window.alert(message), 0);
-  };
-
-  async function requestTrack(id) {
-    try {
-      const response = await fetch(`/api/play/${encodeURIComponent(id)}/`, {
-        headers: { "X-Requested-With": "XMLHttpRequest" },
-      });
-      const data = await response.json();
-      if (!response.ok || data.premium) {
-        if (data.premium) openPremium(data);
-        else showError(data.error || "Unable to play this track.");
-        return null;
-      }
-      return data;
-    } catch (error) {
-      showError("The player could not reach ArtistHub. Please check the server and try again.");
-      return null;
-    }
-  }
-
-  async function playById(id, updateQueue = true) {
-    const data = await requestTrack(id);
-    if (!data) return;
-
-    if (updateQueue) {
-      refreshQueue();
-      currentIndex = queue.indexOf(String(id));
-    }
-
-    audio.pause();
-    audio.src = data.audio_url;
-    audio.load();
-    titleEl.textContent = data.title || "Untitled track";
-    artistEl.textContent = `${data.artist || "Unknown artist"}${data.genre ? ` · ${data.genre}` : ""}`;
-    setCover(data.cover_art);
-    railTitle && (railTitle.textContent = data.title || "Untitled track");
-    railArtist && (railArtist.textContent = data.artist || "Unknown artist");
-    player.hidden = false;
-    seek.value = 0;
-    currentEl.textContent = "0:00";
-    durationEl.textContent = "0:00";
-
-    try {
-      await audio.play();
-      toggle.textContent = "Ⅱ";
-      toggle.setAttribute("aria-label", "Pause");
-    } catch (error) {
-      toggle.textContent = "▶";
-      showError("This audio file could not be played by your browser. Try an MP3, WAV or OGG file.");
-      return;
-    }
-
-    setPlayingState(String(id));
-  }
-
-  function openPremium(data) {
-    const modal = document.querySelector("[data-premium-modal]");
-    if (!modal) return;
-    modal.querySelector("[data-premium-title]").textContent = data.title || "Premium content";
-
-    const links = { youtube: data.youtube_url, audiomack: data.audiomack_url, spotify: data.spotify_url };
-    Object.entries(links).forEach(([key, url]) => {
-      const link = modal.querySelector(`[data-premium-${key}]`);
-      if (!link) return;
-      link.hidden = !url;
-      if (url) link.href = url;
-      else link.removeAttribute("href");
-    });
-    modal.hidden = false;
-    document.body.classList.add("modal-open");
-  }
-
-  async function openPremiumTrack(id) {
-    try {
-      const response = await fetch(`/api/premium/track/${encodeURIComponent(id)}/`);
-      const data = await response.json();
-      if (response.ok) openPremium(data);
-    } catch (_) {}
-  }
-
-  async function openPremiumPost(id) {
-    try {
-      const response = await fetch(`/api/premium/post/${encodeURIComponent(id)}/`);
-      const data = await response.json();
-      if (response.ok) {
-        data.title = `Premium content by @${data.artist}`;
-        openPremium(data);
-      }
-    } catch (_) {}
-  }
-
-  const closePremium = () => {
-    const modal = document.querySelector("[data-premium-modal]");
-    if (modal) modal.hidden = true;
-    document.body.classList.remove("modal-open");
-  };
-
-  document.addEventListener("click", (event) => {
-    const playButton = event.target.closest("[data-play-track]");
-    if (playButton) {
-      playById(playButton.dataset.playTrack);
-      return;
-    }
-    const premiumTrack = event.target.closest("[data-premium-track]");
-    if (premiumTrack) {
-      openPremiumTrack(premiumTrack.dataset.premiumTrack);
-      return;
-    }
-    const premiumPost = event.target.closest("[data-premium-post]");
-    if (premiumPost) {
-      openPremiumPost(premiumPost.dataset.premiumPost);
-      return;
-    }
-    if (event.target.closest("[data-premium-close]") || event.target.matches("[data-premium-modal]")) closePremium();
-  });
-
-  toggle?.addEventListener("click", async () => {
-    if (!audio.src) return;
-    if (audio.paused) {
-      try { await audio.play(); } catch (_) { return; }
-      toggle.textContent = "Ⅱ";
-      toggle.setAttribute("aria-label", "Pause");
-    } else {
-      audio.pause();
-    }
-  });
-
-  prev?.addEventListener("click", () => {
-    refreshQueue();
-    if (!queue.length) return;
-    currentIndex = currentIndex <= 0 ? queue.length - 1 : currentIndex - 1;
-    playById(queue[currentIndex], false);
-  });
-
-  next?.addEventListener("click", () => {
-    refreshQueue();
-    if (!queue.length) return;
-    currentIndex = currentIndex >= queue.length - 1 ? 0 : currentIndex + 1;
-    playById(queue[currentIndex], false);
-  });
-
-  audio.addEventListener("timeupdate", () => {
-    currentEl.textContent = formatTime(audio.currentTime);
-    durationEl.textContent = formatTime(audio.duration);
-    seek.value = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
-  });
-
-  audio.addEventListener("loadedmetadata", () => {
-    durationEl.textContent = formatTime(audio.duration);
-  });
-
-  audio.addEventListener("play", () => {
-    toggle.textContent = "Ⅱ";
-    toggle.setAttribute("aria-label", "Pause");
-  });
-
-  audio.addEventListener("pause", () => {
-    toggle.textContent = "▶";
-    toggle.setAttribute("aria-label", "Play");
-  });
-
-  audio.addEventListener("error", () => {
-    showError("ArtistHub could not load this audio file. Check that the uploaded file still exists.");
-  });
-
-  audio.addEventListener("ended", () => next?.click());
-
-  seek?.addEventListener("input", () => {
-    if (audio.duration) audio.currentTime = (Number(seek.value) / 100) * audio.duration;
-  });
-
-  volume?.addEventListener("input", () => { audio.volume = Number(volume.value); });
-
-  close?.addEventListener("click", () => {
-    audio.pause();
-    audio.removeAttribute("src");
-    audio.load();
-    player.hidden = true;
-    document.querySelectorAll("[data-play-track]").forEach(el => el.classList.remove("is-playing"));
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closePremium();
-    if (event.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA") {
-      event.preventDefault();
-      document.querySelector(".search input")?.focus();
-    }
-  });
-});
+    document.querySelectorAll
