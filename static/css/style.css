@@ -212,7 +212,7 @@ html[data-theme="light"] .genre-chip.active{background:#161616;color:#fff;border
 .rail-track{width:100%;display:grid;grid-template-columns:24px 39px minmax(0,1fr) 22px;gap:8px;align-items:center;border:0;background:none;color:var(--ah-text);text-align:left;padding:7px 0;border-radius:7px;cursor:pointer}.rail-track:hover{background:rgba(255,255,255,.04)}.rail-rank{font-size:9px;color:#626267;text-align:center}.rail-thumb{width:39px;height:39px;display:grid;place-items:center;border-radius:6px;overflow:hidden;background:#1a1a1c;color:#85858b}.rail-thumb img{width:100%;height:100%;object-fit:cover}.rail-track strong,.rail-track small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rail-track strong{font-size:10px}.rail-track small{font-size:8px;color:#68686e;margin-top:2px}.rail-play{text-align:right;font-size:11px;color:var(--ah-accent-2)}.rail-empty{padding:20px 4px;text-align:center;color:#68686e;font-size:10px}.rail-help h3{font:800 18px/1.15 Manrope;margin:7px 0}.rail-help p{color:#77777d;font-size:10px;line-height:1.7;margin:0 0 14px}.rail-help .btn{min-height:34px;font-size:10px}
 
 /* ==========================================================
-   AUDIOMACK / APPLE MUSIC FULL-SCREEN PLAYER OVERRIDE
+   AUDIOMACK FULL-SCREEN PLAYER OVERRIDE
    ========================================================== */
 .audio-player.audiomack-style {
   position: fixed !important;
@@ -225,11 +225,7 @@ html[data-theme="light"] .genre-chip.active{background:#161616;color:#fff;border
   height: 100vh !important;
   max-width: 100% !important;
   z-index: 9999 !important;
-  
-  /* Dynamic gradient variable support with dark fallback */
-  background: var(--dynamic-player-bg, #0d0d0e) !important;
-  background-blend-mode: screen !important;
-  
+  background-color: #0d0d0e !important;
   color: #ffffff !important;
   display: flex !important;
   flex-direction: column !important;
@@ -243,21 +239,6 @@ html[data-theme="light"] .genre-chip.active{background:#161616;color:#fff;border
   border-radius: 0 !important;
   box-shadow: none !important;
   grid-template-columns: none !important;
-}
-
-/* Apple Music Soft Ambient Blur Glow Effect */
-.audio-player.audiomack-style::before {
-  content: "";
-  position: absolute;
-  top: -15%;
-  left: -15%;
-  width: 130%;
-  height: 130%;
-  background: inherit;
-  filter: blur(65px);
-  opacity: 0.75;
-  z-index: -1;
-  pointer-events: none;
 }
 
 .audio-player.audiomack-style[hidden] {
