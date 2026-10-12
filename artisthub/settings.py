@@ -1,4 +1,3 @@
-```python
 import os
 from pathlib import Path
 
@@ -243,54 +242,22 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # ============================================================
 # SUPABASE STORAGE CONFIGURATION
-#
-# If all required Supabase S3 variables exist:
-#
-#     Django -> Supabase Storage
-#
-# Otherwise:
-#
-#     Django -> local media/
-#
-# This allows the project to work locally without Supabase.
 # ============================================================
 
-AWS_ACCESS_KEY_ID = os.environ.get(
-    "AWS_ACCESS_KEY_ID"
-)
-
-AWS_SECRET_ACCESS_KEY = os.environ.get(
-    "AWS_SECRET_ACCESS_KEY"
-)
-
-AWS_STORAGE_BUCKET_NAME = os.environ.get(
-    "AWS_STORAGE_BUCKET_NAME"
-)
-
-AWS_S3_REGION_NAME = os.environ.get(
-    "AWS_S3_REGION_NAME"
-)
-
-AWS_S3_ENDPOINT_URL = os.environ.get(
-    "AWS_S3_ENDPOINT_URL"
-)
-
-AWS_S3_CUSTOM_DOMAIN = os.environ.get(
-    "AWS_S3_CUSTOM_DOMAIN"
-)
-
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="")
+AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", default="")
+AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="")
+AWS_S3_ENDPOINT_URL = config("AWS_S3_ENDPOINT_URL", default="")
+AWS_S3_CUSTOM_DOMAIN = config("AWS_S3_CUSTOM_DOMAIN", default="")
 
 # Check whether Supabase storage has been configured.
-
-SUPABASE_STORAGE_ENABLED = all(
-    [
-        AWS_ACCESS_KEY_ID,
-        AWS_SECRET_ACCESS_KEY,
-        AWS_STORAGE_BUCKET_NAME,
-        AWS_S3_ENDPOINT_URL,
-    ]
-)
-
+SUPABASE_STORAGE_ENABLED = all([
+    AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY,
+    AWS_STORAGE_BUCKET_NAME,
+    AWS_S3_ENDPOINT_URL,
+])
 
 # ============================================================
 # STORAGE BACKENDS
@@ -436,4 +403,3 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 
 AWS_S3_ADDRESSING_STYLE = "path"
-```
