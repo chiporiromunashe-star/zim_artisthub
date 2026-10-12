@@ -118,25 +118,55 @@
   </div>
 </div>
 
-<section class="audio-player" data-audio-player aria-label="Music player" hidden>
-  <div class="player-track">
-    <div class="player-cover"><img data-player-cover alt="" hidden><span data-player-placeholder>♪</span></div>
-    <div class="player-meta"><strong data-player-title>Select a free song</strong><span data-player-artist>ArtistHub</span></div>
+<section class="audio-player audiomack-style" data-audio-player aria-label="Music player" hidden>
+  <!-- Top Bar Controls -->
+  <div class="player-header">
+    <button type="button" class="player-icon" data-player-close aria-label="Close player">⌵</button>
+    <div class="player-header-title">
+      <small>FROM THE ALBUM</small>
+      <strong data-player-album>Single / Release</strong>
+    </div>
+    <button type="button" class="player-icon" aria-label="Queue">≡</button>
   </div>
-  <div class="player-controls">
+
+  <!-- Big Hero Artwork -->
+  <div class="player-artwork">
+    <img data-player-cover alt="Album Art" hidden>
+    <div class="player-placeholder-art" data-player-placeholder>♪</div>
+  </div>
+
+  <!-- Artist & Song Info -->
+  <div class="player-info">
+    <span class="player-artist-name" data-player-artist>Artist Name</span>
+    <h2 class="player-song-title" data-player-title>Track Title</h2>
+  </div>
+
+  <!-- Action Buttons Row (Download button removed) -->
+  <div class="player-actions">
+    <button type="button" class="action-btn">♡ Like</button>
+    <button type="button" class="action-btn">≡+ Playlist</button>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="player-progress-container">
+    <div class="player-waveform-wrap">
+      <input type="range" data-player-seek min="0" max="100" value="0" step="0.1" aria-label="Song progress">
+    </div>
+    <div class="player-timestamps">
+      <span data-player-current>0:00</span>
+      <span data-player-duration>0:00</span>
+    </div>
+  </div>
+
+  <!-- Transport Controls -->
+  <div class="player-controls-row">
+    <button type="button" class="player-icon sub" aria-label="More options">•••</button>
     <button type="button" class="player-icon" data-player-prev aria-label="Previous track">⏮</button>
-    <button type="button" class="player-main" data-player-toggle aria-label="Play">▶</button>
+    <button type="button" class="player-main-btn" data-player-toggle aria-label="Play">▶</button>
     <button type="button" class="player-icon" data-player-next aria-label="Next track">⏭</button>
+    <button type="button" class="player-icon sub" aria-label="Shuffle">🔀</button>
   </div>
-  <div class="player-progress">
-    <span data-player-current>0:00</span>
-    <input type="range" data-player-seek min="0" max="100" value="0" step="0.1" aria-label="Song progress">
-    <span data-player-duration>0:00</span>
-  </div>
-  <div class="player-volume">
-    <span>🔊</span><input type="range" data-player-volume min="0" max="1" value="1" step="0.05" aria-label="Volume">
-  </div>
-  <button type="button" class="player-close" data-player-close aria-label="Close player">×</button>
+
   <audio data-audio-element preload="metadata"></audio>
 </section>
 
