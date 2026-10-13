@@ -263,32 +263,27 @@ SUPABASE_STORAGE_ENABLED = all([
 # STORAGE BACKENDS
 # ============================================================
 
-if SUPABASE_STORAGE_ENABLED:
 
+if SUPABASE_STORAGE_ENABLED:
     # --------------------------------------------------------
     # PRODUCTION / SUPABASE STORAGE
     # --------------------------------------------------------
 
     STORAGES = {
         "default": {
-            "BACKEND": "storages.backends.s3.S3Storage",
+            "BACKEND": "core.storage_backends.SupabasePublicMediaStorage",
             "OPTIONS": {
                 "access_key": AWS_ACCESS_KEY_ID,
                 "secret_key": AWS_SECRET_ACCESS_KEY,
                 "bucket_name": AWS_STORAGE_BUCKET_NAME,
                 "region_name": AWS_S3_REGION_NAME,
                 "endpoint_url": AWS_S3_ENDPOINT_URL,
-
-                # Supabase S3-compatible storage
                 "addressing_style": "path",
                 "signature_version": "s3v4",
-
-                # Public bucket:
-                # do not generate temporary signed URLs.
                 "querystring_auth": False,
+               
             },
         },
-
         "staticfiles": {
             "BACKEND": (
                 "whitenoise.storage."
@@ -298,6 +293,22 @@ if SUPABASE_STORAGE_ENABLED:
     }
 
 else:
+    # --------------------------------------------------------
+    # LOCAL DEVELOPMENT STORAGE
+    # --------------------------------------------------------
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": (
+                "whitenoise.storage."
+                "CompressedManifestStaticFilesStorage"
+            ),
+        },
+    }
+
 
     # --------------------------------------------------------
     # LOCAL DEVELOPMENT
