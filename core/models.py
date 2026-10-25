@@ -81,6 +81,40 @@ class Track(models.Model):
         return self.get_genre_display()
 
 
+class Album(models.Model):
+    artist = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="albums")
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    cover_art = models.ImageField(upload_to="albums/", blank=True, null=True)
+    tracks = models.ManyToManyField("Track", through="AlbumTrack", related_name="albums", blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.title} — {self.artist}"
+
+    @property
+    def track_count(self):
+        return self.tracks.count()
+
+
+class AlbumTrack(models.Model):
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="album_tracks")
+    track = models.ForeignKey(Track, on_delete=models.CASCADE, related_name="album_entries")
+    position = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        ordering = ["position", "id"]
+        constraints = [
+            models.UniqueConstraint(fields=["album", "track"], name="unique_track_per_album"),
+        ]
+
+    def __str__(self):
+        return f"{self.album.title} — {self.track.title}"
+
+
 class Post(models.Model):
     artist = models.ForeignKey(
         Profile,

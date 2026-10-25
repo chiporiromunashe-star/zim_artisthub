@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Profile, Track, Post, WeeklyTrend, WeeklyTrendSong
+from .models import Profile, Track, Post, WeeklyTrend, WeeklyTrendSong, Album, AlbumTrack
 
 
 @admin.register(Profile)
@@ -135,3 +135,22 @@ class WeeklyTrendSongAdmin(admin.ModelAdmin):
         return obj.track.artist
 
     artist.short_description = "Artist"
+
+
+class AlbumTrackInline(admin.TabularInline):
+    model = AlbumTrack
+    extra = 1
+    autocomplete_fields = ("track",)
+    fields = ("position", "track")
+
+
+@admin.register(Album)
+class AlbumAdmin(admin.ModelAdmin):
+    list_display = ("title", "artist", "track_count", "created_at")
+    search_fields = ("title", "artist__user__username", "artist__user__first_name", "artist__user__last_name")
+    autocomplete_fields = ("artist",)
+    inlines = (AlbumTrackInline,)
+
+    def track_count(self, obj):
+        return obj.tracks.count()
+    track_count.short_description = "Tracks"

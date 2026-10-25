@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import RegisterForm, ProfileForm, TrackForm, PostForm
-from .models import Profile, Track, Post, WeeklyTrend
+from .models import Profile, Track, Post, WeeklyTrend, Album
 
 
 def home(request):
@@ -83,7 +83,10 @@ def feed(request):
         .order_by("-plays", "-created_at")[:10]
     )
 
+    albums = Album.objects.select_related("artist__user").prefetch_related("tracks")[:8]
+
     context = {
+        "albums": albums,
         "tracks": tracks[:20],
         "posts": posts[:12],
         "trending_tracks": trending_tracks,
@@ -117,11 +120,21 @@ def discover(request):
         key=lambda profile: profile.followers.count(),
         reverse=True,
     )
+    tracks = Track.objects.select_related("artist__user").order_by("-plays", "-created_at")
+    if query:
+        tracks = tracks.filter(
+            Q(title__icontains=query)
+            | Q(artist__user__username__icontains=query)
+            | Q(artist__user__first_name__icontains=query)
+            | Q(artist__user__last_name__icontains=query)
+            | Q(genre__icontains=query)
+        )
+    albums = Album.objects.select_related("artist__user").filter(title__icontains=query) if query else Album.objects.select_related("artist__user").all()
 
     return render(
         request,
         "discover.html",
-        {"artists": artists, "query": query},
+        {"artists": artists, "tracks": tracks[:20], "albums": albums[:8], "query": query},
     )
 
 
@@ -283,6 +296,7 @@ def premium_track_info(request, pk):
                 track.artist.user.get_full_name()
                 or track.artist.user.username
             ),
+            "artist_username": track.artist.user.username,
             "cover_art": track.cover_art.url if track.cover_art else "",
             "youtube_url": track.youtube_url,
             "audiomack_url": track.audiomack_url,
@@ -358,11 +372,22 @@ def play_track(request, pk):
                 track.artist.user.get_full_name()
                 or track.artist.user.username
             ),
+            "artist_username": track.artist.user.username,
+            "artist_bio": track.artist.bio,
             "cover_art": track.cover_art.url if track.cover_art else "",
             "genre": track.get_genre_display(),
             "plays": track.plays + 1,
         }
     )
+
+
+def album_detail(request, pk):
+    album = get_object_or_404(
+        Album.objects.select_related("artist__user").prefetch_related("album_tracks__track__artist__user"),
+        pk=pk,
+    )
+    album_tracks = album.album_tracks.select_related("track__artist__user").all()
+    return render(request, "album_detail.html", {"album": album, "album_tracks": album_tracks})
 
 
 def weekly_trends(request):

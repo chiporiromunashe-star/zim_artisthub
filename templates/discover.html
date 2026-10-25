@@ -14,6 +14,27 @@
 <div class="search-result-note">Showing results for <strong>{{ query }}</strong> <a href="{% url 'discover' %}">Clear</a></div>
 {% endif %}
 
+{% if query %}
+<section class="content-section search-music-results">
+  <div class="section-head"><div><span class="eyebrow">TRACKS</span><h2>Matching songs</h2></div></div>
+  <div class="music-list">
+    {% for track in tracks %}
+      <article class="music-row">
+        <button class="row-cover" type="button" {% if track.is_premium %}data-premium-track="{{ track.id }}"{% else %}data-play-track="{{ track.id }}"{% endif %} aria-label="Play {{ track.title }}">
+          {% if track.cover_art %}<img src="{{ track.cover_art.url }}" alt="{{ track.title }} cover" loading="lazy">{% else %}<span class="cover-letter">♪</span>{% endif %}<i>▶</i>
+        </button>
+        <div class="music-main"><div class="music-title"><strong>{{ track.title }}</strong>{% if track.is_premium %}<span class="pill premium">PREMIUM</span>{% endif %}</div><a href="{% url 'artist_profile' track.artist.user.username %}">@{{ track.artist.user.username }}</a><small>{{ track.get_genre_display }} · {{ track.plays }} plays</small></div>
+      </article>
+    {% empty %}<div class="empty"><strong>No matching songs.</strong><span>Try a different artist, song title or genre.</span></div>{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if albums %}
+<section class="content-section" id="albums"><div class="section-head"><div><span class="eyebrow">ALBUMS</span><h2>{% if query %}Matching albums{% else %}Albums & collections{% endif %}</h2></div></div>
+<div class="album-grid">{% for album in albums %}<a class="album-card" href="{% url 'album_detail' album.id %}"><div class="album-cover">{% if album.cover_art %}<img src="{{ album.cover_art.url }}" alt="{{ album.title }} cover" loading="lazy">{% else %}<span>♫</span>{% endif %}</div><strong>{{ album.title }}</strong><small>@{{ album.artist.user.username }} · {{ album.tracks.count }} tracks</small></a>{% endfor %}</div></section>
+{% endif %}
+
 <section class="artist-grid">
 {% for artist in artists %}
 <a class="artist-card" href="{{ artist.get_absolute_url }}">

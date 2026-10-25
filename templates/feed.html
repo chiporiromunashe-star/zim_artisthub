@@ -1,14 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Home — ArtistHub{% endblock %}
+{% block title %}Home — KGS Audio{% endblock %}
 {% block breadcrumb %}Home{% endblock %}
 {% block content %}
 <div class="music-workspace">
   <section class="home-main">
     <div class="page-heading">
       <div>
-        <span class="eyebrow">DISCOVER MUSIC</span>
-        <h1>Fresh sounds from ArtistHub</h1>
-        <p>Real releases uploaded by artists. No placeholder songs.</p>
+        <span class="eyebrow">YOUR SOUND. YOUR SCENE.</span>
+        <h1>Feel the <em>sound.</em></h1>
+        <p>Trending tracks, fresh releases and artists worth discovering.</p>
       </div>
       {% if user.is_authenticated and user.profile.is_artist %}
         <a class="btn" href="{% url 'upload_track' %}">＋ Upload track</a>
@@ -21,6 +21,22 @@
         <a class="genre-chip {% if selected_genre == key %}active{% endif %}" href="{% url 'genre_tracks' key %}">{{ label }}</a>
       {% endfor %}
     </div>
+
+    {% if albums %}
+      <section class="content-section album-section" id="albums">
+        <div class="section-head">
+          <div><span class="eyebrow">FULL PROJECTS</span><h2>Albums & collections</h2><p class="section-sub">Explore releases as complete tracklists.</p></div>
+        </div>
+        <div class="album-grid">
+          {% for album in albums %}
+            <a class="album-card" href="{% url 'album_detail' album.id %}">
+              <div class="album-cover">{% if album.cover_art %}<img src="{{ album.cover_art.url }}" alt="{{ album.title }} cover" loading="lazy">{% else %}<span>♫</span>{% endif %}</div>
+              <strong>{{ album.title }}</strong><small>@{{ album.artist.user.username }} · {{ album.tracks.count }} tracks</small>
+            </a>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
 
     {% if weekly_trend and weekly_trend.songs.all %}
       <section class="content-section chart-panel">
@@ -43,7 +59,7 @@
 
     <section class="content-section" id="latest">
       <div class="section-head">
-        <div><span class="eyebrow">LATEST</span><h2>New releases</h2><p class="section-sub">Only music that actually exists in your database appears here.</p></div>
+        <div><span class="eyebrow">MADE FOR YOUR MOMENT</span><h2>Latest music</h2><p class="section-sub">Fresh releases from artists on KGS Audio.</p></div>
       </div>
 
       <div class="music-list">
@@ -107,7 +123,7 @@
     </div>
 
     <div class="rail-card">
-      <div class="rail-head"><div><span class="eyebrow">TRENDING</span><h3>Most played</h3></div><a href="{% url 'weekly_trends' %}">Charts</a></div>
+      <div class="rail-head"><div><span class="eyebrow">ON REPEAT</span><h3>Trending now</h3></div><a href="{% url 'weekly_trends' %}">Charts</a></div>
       {% for track in trending_tracks|slice:":5" %}
         <button class="rail-track" type="button" {% if track.is_premium %}data-premium-track="{{ track.id }}"{% else %}data-play-track="{{ track.id }}"{% endif %}>
           <span class="rail-rank">{{ forloop.counter|stringformat:"02d" }}</span>

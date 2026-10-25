@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ album.title }} — KGS Audio{% endblock %}
+{% block breadcrumb %}Album{% endblock %}
+{% block content %}
+<section class="album-detail-hero">
+  <div class="album-detail-cover">{% if album.cover_art %}<img src="{{ album.cover_art.url }}" alt="{{ album.title }} cover">{% else %}<span>♫</span>{% endif %}</div>
+  <div class="album-detail-copy"><span class="eyebrow">ALBUM / COLLECTION</span><h1>{{ album.title }}</h1><a href="{% url 'artist_profile' album.artist.user.username %}">@{{ album.artist.user.username }}</a><p>{{ album.description|default:"A collection of tracks on KGS Audio." }}</p><span class="album-meta">{{ album_tracks|length }} tracks · {{ album.created_at|date:"M Y" }}</span></div>
+</section>
+<section class="content-section album-track-section">
+  <div class="section-head"><div><span class="eyebrow">THE TRACKLIST</span><h2>Songs in this album</h2></div></div>
+  <div class="music-list">
+  {% for entry in album_tracks %}{% with track=entry.track %}
+    <article class="music-row">
+      <span class="rank">{{ forloop.counter|stringformat:"02d" }}</span>
+      <button class="row-cover" type="button" {% if track.is_premium %}data-premium-track="{{ track.id }}"{% else %}data-play-track="{{ track.id }}"{% endif %} aria-label="Play {{ track.title }}">{% if track.cover_art %}<img src="{{ track.cover_art.url }}" alt="{{ track.title }} cover">{% elif album.cover_art %}<img src="{{ album.cover_art.url }}" alt="{{ album.title }} cover">{% else %}<span class="cover-letter">♪</span>{% endif %}<i>▶</i></button>
+      <div class="music-main"><div class="music-title"><strong>{{ track.title }}</strong>{% if track.is_premium %}<span class="pill premium">PREMIUM</span>{% else %}<span class="pill free">FREE</span>{% endif %}</div><a href="{% url 'artist_profile' track.artist.user.username %}">@{{ track.artist.user.username }}</a><small>{{ track.get_genre_display }} · {{ track.plays }} plays</small></div>
+      <button class="row-more" type="button" {% if track.is_premium %}data-premium-track="{{ track.id }}"{% else %}data-play-track="{{ track.id }}"{% endif %} aria-label="Play {{ track.title }}">⋯</button>
+    </article>
+  {% endwith %}{% empty %}<div class="empty"><strong>This album has no tracks yet.</strong><span>Add songs to the album from Django Admin → Albums.</span></div>{% endfor %}
+  </div>
+</section>
+{% endblock %}

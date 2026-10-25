@@ -7,6 +7,7 @@ urlpatterns = [
     path("", views.feed, name="feed"),
     path("discover/", views.discover, name="discover"),
     path("trends/", views.weekly_trends, name="weekly_trends"),
+    path("album/<int:pk>/", views.album_detail, name="album_detail"),
 
     path("register/", views.register_view, name="register"),
     path("login/", views.login_view, name="login"),
