@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Join — ArtistHub{% endblock %}
+{% block title %}Join — KGS Audio{% endblock %}
 {% block content %}
 <div class="auth-page">
-  <div class="auth-visual"><span class="eyebrow">JOIN THE COMMUNITY</span><h1>Build your audience<br><em>on your terms.</em></h1><p>Share music, connect with fans and send premium listeners to the platforms you choose.</p><div class="auth-orb">A</div></div>
-  <section class="auth card"><span class="eyebrow">CREATE ACCOUNT</span><h2>Join ArtistHub</h2><p class="auth-sub">Create a listener or artist account.</p>
+  <div class="auth-visual"><span class="eyebrow">JOIN THE COMMUNITY</span><h1>Your sound.<br><em>Your people.</em></h1><p>Join KGS Audio as an artist, producer, or listener. Producers can share studio details; listeners can discover new music.</p><div class="auth-orb">K</div></div>
+  <section class="auth card"><span class="eyebrow">CREATE ACCOUNT</span><h2>Join KGS Audio</h2><p class="auth-sub">Choose the account type that fits you.</p>
     <form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn full" type="submit">Create account</button></form>
     <p class="auth-footer">Already registered? <a href="{% url 'login' %}">Log in</a></p>
   </section>

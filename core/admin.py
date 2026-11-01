@@ -5,13 +5,13 @@ from .models import Profile, Track, Post, WeeklyTrend, WeeklyTrendSong, Album, A
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "is_artist", "follower_count")
+    list_display = ("user", "role", "is_artist", "follower_count")
     search_fields = (
         "user__username",
         "user__first_name",
         "user__last_name",
     )
-    list_filter = ("is_artist",)
+    list_filter = ("role", "is_artist")
 
     def follower_count(self, obj):
         return obj.followers.count()

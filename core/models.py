@@ -9,7 +9,11 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         related_name="profile",
     )
+    ROLE_CHOICES = [("artist", "Artist"), ("producer", "Producer"), ("listener", "Listener")]
+    role = models.CharField(max_length=12, choices=ROLE_CHOICES, default="listener")
     is_artist = models.BooleanField(default=False)
+    studio_name = models.CharField(max_length=160, blank=True)
+    professional_name = models.CharField(max_length=160, blank=True)
     bio = models.TextField(blank=True)
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     banner = models.ImageField(upload_to="banners/", blank=True, null=True)
@@ -67,6 +71,15 @@ class Track(models.Model):
         blank=True,
         help_text="Spotify link for this song.",
     )
+    producer_name = models.CharField(max_length=160, blank=True)
+    producer_phone = models.CharField(max_length=30, blank=True)
+    producer_email = models.EmailField(blank=True)
+    dj_name = models.CharField(max_length=160, blank=True)
+    studio_name = models.CharField(max_length=160, blank=True)
+    production_location = models.CharField(max_length=160, blank=True)
+    producer_photo = models.ImageField(upload_to="producer-credits/", blank=True, null=True)
+    dj_photo = models.ImageField(upload_to="dj-credits/", blank=True, null=True)
+    production_notes = models.CharField(max_length=240, blank=True)
     plays = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 

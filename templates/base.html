@@ -62,10 +62,11 @@
 
 <section class="audio-player" data-audio-player aria-label="Music player" hidden>
   <button type="button" class="player-expand" data-player-expand aria-label="Open full player">⌃</button>
-  <div class="player-track">
+  <button type="button" class="player-track player-track-open" data-player-open aria-label="Open full player">
     <div class="player-cover"><img data-player-cover alt="" hidden><span data-player-placeholder>♪</span></div>
     <div class="player-meta"><strong data-player-title>Select a free song</strong><span data-player-artist>ArtistHub</span></div>
   </div>
+  </button>
   <div class="player-controls">
     <button type="button" class="player-icon" data-player-prev aria-label="Previous track">⏮</button>
     <button type="button" class="player-main" data-player-toggle aria-label="Play">▶</button>
@@ -95,11 +96,44 @@
 <section class="full-player" data-full-player hidden aria-label="Expanded music player">
   <header class="full-player-header"><button type="button" data-player-collapse aria-label="Minimise player">⌄</button><span>NOW PLAYING</span><button type="button" data-player-close-full aria-label="Close player">×</button></header>
   <div class="full-player-content">
-    <div class="full-player-art"><img data-full-cover alt="Album artwork" hidden><span data-full-placeholder>♫</span></div>
+    <div class="full-player-art" data-artwork-stage>
+      <img data-full-cover alt="Album artwork" hidden>
+      <span data-full-placeholder>♫</span>
+      <div class="producer-info-card" data-producer-card hidden>
+        <div class="producer-card-top">
+          <span class="producer-card-label">KGS AUDIO ORIGINAL</span>
+          <span class="producer-card-number">PRODUCTION CREDITS / 01</span>
+        </div>
+        <div class="producer-card-main">
+          <div class="producer-card-photo-wrap">
+            <img data-producer-photo alt="Producer portrait" hidden>
+            <div class="producer-photo-placeholder" data-producer-placeholder><span>♫</span></div>
+          </div>
+          <div class="producer-info-copy">
+            <span class="eyebrow">BEHIND THE SOUND</span>
+            <h2 data-producer-name>Producer name</h2>
+            <p class="producer-role">MUSIC PRODUCER</p>
+          </div>
+        </div>
+        <div class="producer-card-details">
+          <div class="producer-detail"><span>STUDIO</span><strong data-studio-name>—</strong></div>
+          <div class="producer-detail"><span>LOCATION</span><strong data-production-location>—</strong></div>
+        </div>
+        <div class="producer-card-contact">
+          <span class="producer-contact-heading">GET IN TOUCH</span>
+          <div class="producer-contact-row" data-producer-phone-row hidden><span>PHONE</span><a data-producer-phone></a></div>
+          <div class="producer-contact-row" data-producer-email-row hidden><span>EMAIL</span><a data-producer-email></a></div>
+        </div>
+        <div class="producer-card-footer">
+          <span>KGS AUDIO</span><span>THE ART OF SOUND</span>
+        </div>
+      </div>
+    </div>
     <div class="full-player-trackline"><div><h2 data-full-title>Select a song</h2><p data-full-artist>KGS Audio</p></div><button type="button" data-player-like aria-label="Like song">♡</button></div>
     <div class="full-waveform" data-full-waveform aria-label="Audio waveform" role="img"></div><div class="full-player-progress"><div><span data-full-current>0:00</span><span data-full-duration>0:00</span></div></div>
     <div class="full-player-controls"><button type="button" data-player-shuffle aria-label="Shuffle">⤨</button><button type="button" data-full-prev aria-label="Previous track">⏮</button><button type="button" class="full-play-button" data-full-toggle aria-label="Play">▶</button><button type="button" data-full-next aria-label="Next track">⏭</button><button type="button" data-player-repeat aria-label="Repeat">↻</button></div>
     <div class="full-player-actions"><a data-player-download href="#" download>⇩ <span>Download</span></a><button type="button" data-player-playlist>＋ <span>Playlist</span></button><button type="button" data-player-share>↗ <span>Share</span></button></div>
+    <section class="player-related" aria-label="More music"><h3>More music for you</h3><p class="related-subtitle">More from this artist and producer</p><div class="related-track-list" data-related-tracks><p class="related-empty">Play a song to discover related music.</p></div></section>
   </div>
 </section>
 

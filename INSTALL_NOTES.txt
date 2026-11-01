@@ -1,0 +1,28 @@
+KGS Audio Producer & Player Adjustments
+
+Included replacement files are relative to your Django project root (the folder containing manage.py).
+
+Changes included:
+- Signup role choice: Artist, Producer, Listener.
+- Profile role/professional/studio fields.
+- Manual track credits: producer, DJ, studio, location, notes, and optional producer/DJ photos.
+- Playback API returns credits and related database tracks by artist/producer/DJ.
+- Full player artwork/producer card switches according to playback time: cover 0-10s, producer card 10-20s, repeating. It uses audio.currentTime, so pause/seek follows playback accurately.
+- Mini-player song area opens the expanded player; closing/collapsing does not stop audio.
+- Scrollable related-track list in the expanded player.
+
+SAFE INSTALL:
+1. Make a backup or commit your current project before replacing files.
+2. Extract this ZIP into the project root, preserving the folders. Allow files to merge/replace.
+3. In the VS Code terminal, activate your virtual environment.
+4. Run: python manage.py check
+5. Run: python manage.py migrate
+6. Run: python manage.py runserver
+7. Test signup, upload a track with credits/photos, play it, pause/seek, open the mini-player, and scroll to related tracks.
+8. Only after local testing, git add the changed files, commit, push, and check Render logs.
+
+Do not delete or recreate your database. The migration adds nullable/blank fields and preserves existing tracks/accounts. Existing is_artist is retained for backward compatibility.
+
+SECURITY: The ZIP uploaded for inspection contained a .env file. This patch intentionally excludes .env, settings.py, Git history, and credentials. Do not commit .env to GitHub. If any real secrets were ever pushed to a public repository, rotate them in the relevant provider dashboards.
+
+Note: Related tracks are populated from matching artist/producer/DJ credits already stored in the database. Songs with no matching credits may show an empty recommendation section.

@@ -106,6 +106,19 @@ document.addEventListener("DOMContentLoaded", () => {
     catch (_) { return []; }
   };
   let likedTracks = new Set(readStoredArray("kgs-liked-tracks"));
+  const producerCard = document.querySelector("[data-producer-card]");
+  const producerPhoto = document.querySelector("[data-producer-photo]");
+  const producerPlaceholder = document.querySelector("[data-producer-placeholder]");
+  const producerPhone = document.querySelector("[data-producer-phone]");
+  const producerPhoneRow = document.querySelector("[data-producer-phone-row]");
+  const producerEmail = document.querySelector("[data-producer-email]");
+  const producerEmailRow = document.querySelector("[data-producer-email-row]");
+  const producerName = document.querySelector("[data-producer-name]");
+  const studioName = document.querySelector("[data-studio-name]");
+  const productionLocation = document.querySelector("[data-production-location]");
+  const relatedTracksEl = document.querySelector("[data-related-tracks]");
+  let currentTrackData = null;
+  let showingProducerCard = false;
 
   let queue = [];
   let currentIndex = -1;
@@ -160,9 +173,67 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function showArtwork(showProducer) {
+        const hasProducerCredits = Boolean(
+            currentTrackData && (
+                currentTrackData.producer_name ||
+                currentTrackData.producer_photo ||
+                currentTrackData.studio_name ||
+                currentTrackData.production_location ||
+                currentTrackData.producer_phone ||
+                currentTrackData.producer_email
+            )
+        );
+        showingProducerCard = Boolean(showProducer && producerCard && hasProducerCredits);
+        if (producerCard) producerCard.hidden = !showingProducerCard;
+        if (fullCover) fullCover.hidden = showingProducerCard || !currentTrackData?.cover_art;
+        if (fullPlaceholder) fullPlaceholder.hidden = showingProducerCard || Boolean(currentTrackData?.cover_art);
+    }
+
+    function resetArtworkCycle() {
+        showingProducerCard = false;
+        showArtwork(false);
+    }
+  function renderRelated(items) {
+        if (!relatedTracksEl) return;
+        relatedTracksEl.replaceChildren();
+        if (!items || !items.length) {
+            const empty = document.createElement("p");
+            empty.className = "related-empty";
+            empty.textContent = "No other related songs yet.";
+            relatedTracksEl.appendChild(empty);
+            return;
+        }
+        items.forEach(item => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "related-track";
+            button.dataset.playTrack = String(item.id);
+            if (item.cover_art) {
+                const img = document.createElement("img");
+                img.src = item.cover_art;
+                img.alt = "";
+                button.appendChild(img);
+            }
+            const copy = document.createElement("span");
+            copy.className = "related-track-copy";
+            const title = document.createElement("strong");
+            title.textContent = item.title || "Untitled track";
+            const meta = document.createElement("small");
+            meta.textContent = [
+                item.artist,
+                item.producer_name ? `Produced by ${item.producer_name}` : ""
+            ].filter(Boolean).join(" · ");
+            copy.append(title, meta);
+            button.appendChild(copy);
+            relatedTracksEl.appendChild(button);
+        });
+    }
+
   async function playById(id, updateQueue = true) {
     const data = await requestTrack(id);
     if (!data) return;
+    currentTrackData = data;
 
     if (updateQueue) {
       refreshQueue();
@@ -182,6 +253,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (fullArtistLink) fullArtistLink.href = `/artist/${encodeURIComponent(data.artist_username || "")}/`;
     if (fullCover && data.cover_art) { fullCover.src = data.cover_art; fullCover.hidden = false; if (fullPlaceholder) fullPlaceholder.hidden = true; }
     else if (fullCover) { fullCover.removeAttribute("src"); fullCover.hidden = true; if (fullPlaceholder) fullPlaceholder.hidden = false; }
+    if (producerName) producerName.textContent = data.producer_name || "Production credits";
+    if (studioName) studioName.textContent = data.studio_name ? `Studio: ${data.studio_name}` : "";
+    if (productionLocation) productionLocation.textContent = data.production_location ? `Location: ${data.production_location}` : "";
+    if (producerPhoto) { const photo = data.producer_photo; producerPhoto.src = photo || ""; producerPhoto.hidden = !photo; }
+    if (producerCard) producerCard.hidden = !(data.producer_name || data.producer_photo || data.studio_name || data.production_location || data.producer_phone || data.producer_email);
+    renderRelated(data.related_tracks || []);
+    resetArtworkCycle();
     if (downloadLink) {
       const filename = `${(data.title || "track").replace(/[^a-z0-9-_ ]/gi, "").trim() || "track"}.mp3`;
       try { const audioUrl = new URL(data.audio_url, window.location.href); if (audioUrl.origin !== window.location.origin) audioUrl.searchParams.set("download", filename); downloadLink.href = audioUrl.toString(); }
@@ -279,7 +357,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const heights = [12,18,27,15,34,22,42,28,18,37,48,24,31,17,44,26,52,35,21,39,28,46,19,33,55,24,40,17,30,47,22,36,51,28,18,43,25,38,56,31,20,45,27,35,49,16,29,42,23,37,53,26,19,44,32,48,21,36,55,24,40,18,31,46,27,38,51,20,34,43,25,56,30,17,41,23,35,49,28,19,44,32,52,24,37,46,21,34,55,26,40,18,31,47,23,38,50,29,16,43,25,36,53,20,33,45,27,39,49,22,35,56,18,30,42,24,37,51,28,19,44,32,48];
     heights.forEach((height, index) => { const bar = document.createElement("i"); bar.style.setProperty("--bar-height", `${height}px`); bar.style.setProperty("--bar-delay", `${(index % 13) * -0.07}s`); waveform.appendChild(bar); });
   }
-  document.querySelector("[data-player-expand]")?.addEventListener("click", () => { if (fullPlayer) fullPlayer.hidden = false; });
+  const openFullPlayer = () => { if (fullPlayer) fullPlayer.hidden = false; };
+  document.querySelector("[data-player-expand]")?.addEventListener("click", openFullPlayer);
+  document.querySelector("[data-player-open]")?.addEventListener("click", openFullPlayer);
+  document.querySelector("[data-player-cover]")?.addEventListener("click", openFullPlayer);
+  document.querySelector("[data-player-title]")?.addEventListener("click", openFullPlayer);
   document.querySelector("[data-player-collapse]")?.addEventListener("click", () => { if (fullPlayer) fullPlayer.hidden = true; });
   document.querySelector("[data-player-close-full]")?.addEventListener("click", () => { if (fullPlayer) fullPlayer.hidden = true; });
   fullToggle?.addEventListener("click", () => toggle?.click());
@@ -333,6 +415,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   audio.addEventListener("timeupdate", () => {
+    // Derive the visual from playback time, so pauses/seeks behave correctly.
+    showArtwork(Math.floor(audio.currentTime / 10) % 2 === 1);
     currentEl.textContent = formatTime(audio.currentTime);
     durationEl.textContent = formatTime(audio.duration);
     seek.value = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;

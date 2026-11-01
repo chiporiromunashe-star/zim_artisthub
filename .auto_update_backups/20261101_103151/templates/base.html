@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta name="description" content="KGS Audio — discover independent music, trending songs and artists.">
+  <title>{% block title %}KGS Audio{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <script>
+    (() => {
+      const saved = localStorage.getItem("artisthub-theme");
+      document.documentElement.dataset.theme = saved || "dark";
+    })();
+  </script>
+</head>
+<body>
+<div class="app-shell">
+  <div class="workspace">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="breadcrumb">KGS Audio <span>›</span> {% block breadcrumb %}Home{% endblock %}</span>
+      </div>
+
+      <form class="search" action="{% url 'discover' %}" method="get" role="search">
+        <span class="search-icon">⌕</span>
+        <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search artists, tracks..." aria-label="Search artists and tracks">
+        <kbd>/</kbd>
+      </form>
+
+      <div class="topbar-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme"><span data-theme-icon>☀</span></button>
+        {% if user.is_authenticated %}
+          <a class="profile-chip" href="{% url 'dashboard' %}"><span>{{ user.username|first|upper }}</span><strong>{{ user.username }}</strong></a>
+        {% else %}
+          <a class="btn btn-sm" href="{% url 'register' %}">Join free</a>
+        {% endif %}
+      </div>
+    </header>
+
+    <main class="container">
+      {% if messages %}
+        <div class="flash-stack" aria-live="polite">
+          {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}"><span>{{ message }}</span><span class="message-dot"></span></div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div><strong>KGS Audio</strong><span>Discover independent music and artists.</span></div>
+      <span>© 2026 ArtistHub</span>
+    </footer>
+  </div>
+</div>
+
+<section class="audio-player" data-audio-player aria-label="Music player" hidden>
+  <button type="button" class="player-expand" data-player-expand aria-label="Open full player">⌃</button>
+  <button type="button" class="player-track player-track-open" data-player-open aria-label="Open full player">
+    <div class="player-cover"><img data-player-cover alt="" hidden><span data-player-placeholder>♪</span></div>
+    <div class="player-meta"><strong data-player-title>Select a free song</strong><span data-player-artist>ArtistHub</span></div>
+  </div>
+  </button>
+  <div class="player-controls">
+    <button type="button" class="player-icon" data-player-prev aria-label="Previous track">⏮</button>
+    <button type="button" class="player-main" data-player-toggle aria-label="Play">▶</button>
+    <button type="button" class="player-icon" data-player-next aria-label="Next track">⏭</button>
+  </div>
+  <div class="player-progress">
+    <span data-player-current>0:00</span>
+    <input type="range" data-player-seek min="0" max="100" value="0" step="0.1" aria-label="Song progress">
+    <span data-player-duration>0:00</span>
+  </div>
+  <div class="player-volume">
+    <span>🔊</span><input type="range" data-player-volume min="0" max="1" value="1" step="0.05" aria-label="Volume">
+  </div>
+  <button type="button" class="player-close" data-player-close aria-label="Close player">×</button>
+  <audio data-audio-element preload="metadata"></audio>
+</section>
+
+
+<nav class="mobile-bottom-nav" aria-label="Main navigation">
+  <a href="/" class="mobile-nav-item"><span>⌂</span><small>Home</small></a>
+  <a href="/discover/" class="mobile-nav-item"><span>⌕</span><small>Discover</small></a>
+  <a href="/trends/" class="mobile-nav-item"><span>≡</span><small>Charts</small></a>
+  <a href="/discover/#albums" class="mobile-nav-item"><span>▣</span><small>Albums</small></a>
+  <a href="/genre/hiphop/" class="mobile-nav-item"><span>♫</span><small>Genres</small></a>
+</nav>
+
+<section class="full-player" data-full-player hidden aria-label="Expanded music player">
+  <header class="full-player-header"><button type="button" data-player-collapse aria-label="Minimise player">⌄</button><span>NOW PLAYING</span><button type="button" data-player-close-full aria-label="Close player">×</button></header>
+  <div class="full-player-content">
+    <div class="full-player-art" data-artwork-stage><img data-full-cover alt="Album artwork" hidden><span data-full-placeholder>♫</span><div class="producer-info-card" data-producer-card hidden><img data-producer-photo alt="Producer" hidden><div class="producer-info-copy"><span class="eyebrow">BEHIND THE SOUND</span><h3 data-producer-name>Producer credits</h3><p data-dj-name></p><p data-studio-name></p><p data-production-location></p><small data-production-notes></small></div></div></div>
+    <div class="full-player-trackline"><div><h2 data-full-title>Select a song</h2><p data-full-artist>KGS Audio</p></div><button type="button" data-player-like aria-label="Like song">♡</button></div>
+    <div class="full-waveform" data-full-waveform aria-label="Audio waveform" role="img"></div><div class="full-player-progress"><div><span data-full-current>0:00</span><span data-full-duration>0:00</span></div></div>
+    <div class="full-player-controls"><button type="button" data-player-shuffle aria-label="Shuffle">⤨</button><button type="button" data-full-prev aria-label="Previous track">⏮</button><button type="button" class="full-play-button" data-full-toggle aria-label="Play">▶</button><button type="button" data-full-next aria-label="Next track">⏭</button><button type="button" data-player-repeat aria-label="Repeat">↻</button></div>
+    <div class="full-player-actions"><a data-player-download href="#" download>⇩ <span>Download</span></a><button type="button" data-player-playlist>＋ <span>Playlist</span></button><button type="button" data-player-share>↗ <span>Share</span></button></div>
+    <section class="player-related" aria-label="More music"><h3>More music for you</h3><p class="related-subtitle">More from this artist, producer and DJ</p><div class="related-track-list" data-related-tracks><p class="related-empty">Play a song to discover related music.</p></div></section>
+  </div>
+</section>
+
+<div class="modal-backdrop" data-premium-modal hidden>
+  <section class="premium-modal" role="dialog" aria-modal="true" aria-labelledby="premium-title">
+    <button class="modal-close" type="button" data-premium-close aria-label="Close">×</button>
+    <div class="premium-icon">↗</div>
+    <span class="eyebrow">LISTEN EXTERNALLY</span>
+    <h2 id="premium-title" data-premium-title>Premium content</h2>
+    <p>This release is marked premium by the artist. Choose an external platform to listen.</p>
+    <div class="external-links">
+      <a class="external-link youtube" data-premium-youtube target="_blank" rel="noopener" hidden>YouTube <span>↗</span></a>
+      <a class="external-link audiomack" data-premium-audiomack target="_blank" rel="noopener" hidden>Audiomack <span>↗</span></a>
+      <a class="external-link spotify" data-premium-spotify target="_blank" rel="noopener" hidden>Spotify <span>↗</span></a>
+    </div>
+    <p class="modal-note">No payment is handled inside ArtistHub.</p>
+  </section>
+</div>
+
+<script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

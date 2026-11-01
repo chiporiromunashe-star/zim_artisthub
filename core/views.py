@@ -24,8 +24,12 @@ def register_view(request):
             user.set_password(form.cleaned_data["password"])
             user.save()
 
-            user.profile.is_artist = form.cleaned_data["is_artist"]
-            user.profile.save()
+            profile = user.profile
+            profile.role = form.cleaned_data["role"]
+            profile.is_artist = profile.role == "artist"
+            profile.professional_name = form.cleaned_data.get("professional_name", "").strip()
+            profile.studio_name = form.cleaned_data.get("studio_name", "").strip()
+            profile.save()
 
             login(request, user)
             return redirect("feed")
@@ -224,8 +228,8 @@ def edit_profile(request):
 
 @login_required
 def upload_track(request):
-    if not request.user.profile.is_artist:
-        messages.error(request, "Enable artist mode first.")
+    if request.user.profile.role not in ("artist", "producer") and not request.user.profile.is_artist:
+        messages.error(request, "Artist or producer accounts can upload tracks.")
         return redirect("edit_profile")
 
     if request.method == "POST":
@@ -333,6 +337,28 @@ def premium_post_info(request, pk):
     )
 
 
+def _related_track_payload(track):
+    """Return tracks related by artist or producer."""
+    query = Q(artist_id=track.artist_id)
+    producer_name = (track.producer_name or "").strip()
+    if producer_name:
+        query |= Q(producer_name__iexact=producer_name)
+    related = (
+        Track.objects.filter(query)
+        .exclude(pk=track.pk)
+        .select_related("artist__user")
+        .order_by("-plays", "-created_at")[:12]
+    )
+    return [{
+        "id": item.pk,
+        "title": item.title,
+        "artist": item.artist.user.get_full_name() or item.artist.user.username,
+        "artist_username": item.artist.user.username,
+        "cover_art": item.cover_art.url if item.cover_art else "",
+        "producer_name": item.producer_name,
+    } for item in related]
+
+
 def play_track(request, pk):
     track = get_object_or_404(
         Track.objects.select_related("artist__user"),
@@ -376,7 +402,14 @@ def play_track(request, pk):
             "artist_bio": track.artist.bio,
             "cover_art": track.cover_art.url if track.cover_art else "",
             "genre": track.get_genre_display(),
+            "producer_name": track.producer_name,
+            "producer_photo": track.producer_photo.url if track.producer_photo else "",
+            "producer_phone": track.producer_phone,
+            "producer_email": track.producer_email,
+            "studio_name": track.studio_name,
+            "production_location": track.production_location,
             "plays": track.plays + 1,
+            "related_tracks": _related_track_payload(track),
         }
     )
 

@@ -737,3 +737,90 @@ html[data-theme="light"] .mobile-nav-item[aria-current="page"] { color:var(--kgs
   .full-player-controls { margin:16px auto 22px !important; }
   .full-player-actions { gap:7px !important; }
 }
+
+
+/* Producer/DJ credits and scrollable recommendations in the expanded player */
+.player-track-open { border:0; background:transparent; color:inherit; text-align:left; cursor:pointer; min-width:0; }
+.producer-info-card { width:100%; height:100%; min-height:250px; padding:clamp(18px,4vw,34px); display:flex; align-items:center; justify-content:center; gap:20px; background:linear-gradient(145deg,rgba(133,111,255,.98),rgba(77,111,199,.98) 58%,rgba(40,48,89,.99)); color:#fff; }
+.producer-info-card[hidden] { display:none !important; }
+.producer-info-card img { width:34%; max-width:155px; aspect-ratio:1; object-fit:cover; border-radius:18px; box-shadow:0 12px 35px #1115; }
+.producer-info-copy { min-width:0; overflow-wrap:anywhere; }
+.producer-info-copy h3 { margin:8px 0 12px; font-size:clamp(20px,3vw,30px); }
+.producer-info-copy p { margin:7px 0; font-size:14px; }
+.producer-info-copy small { display:block; margin-top:10px; opacity:.86; }
+.player-related { width:100%; margin:34px auto 12px; padding:20px 0 35px; border-top:1px solid var(--ah-border); }
+.player-related h3 { margin:0 0 5px; font-size:22px; }
+.related-subtitle,.related-empty { color:var(--ah-muted); font-size:13px; }
+.related-track-list { display:grid; gap:8px; margin-top:16px; }
+.related-track { width:100%; display:flex; gap:12px; align-items:center; padding:9px; border:1px solid var(--ah-border); border-radius:14px; background:var(--ah-card,rgba(255,255,255,.04)); color:inherit; text-align:left; cursor:pointer; }
+.related-track img { width:54px; height:54px; flex:0 0 54px; object-fit:cover; border-radius:9px; }
+.related-track-copy { min-width:0; display:flex; flex-direction:column; gap:4px; }
+.related-track-copy strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.related-track-copy small { color:var(--ah-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.full-player-art { position:relative; }
+.full-player-art [data-full-cover] { position:absolute; inset:0; }
+.full-player-art [data-producer-card] { position:absolute; inset:0; }
+@media(max-width:520px) { .producer-info-card { flex-direction:column; gap:12px; text-align:center; } .producer-info-card img { width:90px; } .producer-info-copy p { font-size:12px; } }
+
+.full-player-art [hidden], .producer-info-card [hidden] { display:none !important; }
+
+/* KGS Audio — editorial producer credits card */
+.full-player-art { position:relative; isolation:isolate; }
+.full-player-art [data-full-cover],
+.full-player-art [data-producer-card] { position:absolute; inset:0; width:100%; height:100%; }
+.full-player-art [data-full-cover] { object-fit:cover; }
+.producer-info-card {
+  box-sizing:border-box; overflow:hidden; width:100%; height:100%; min-height:0;
+  display:flex; flex-direction:column; justify-content:space-between; gap:clamp(10px,2.2vw,22px);
+  padding:clamp(15px,3.4vw,29px); color:#f7f5ff;
+  background:
+    radial-gradient(ellipse at 88% 5%,rgba(178,158,255,.32),transparent 34%),
+    radial-gradient(ellipse at 0% 100%,rgba(81,112,232,.22),transparent 42%),
+    linear-gradient(145deg,#171629 0%,#10101d 52%,#090b15 100%);
+  border:1px solid rgba(215,205,255,.2); border-radius:inherit;
+}
+.producer-info-card[hidden] { display:none !important; }
+.producer-card-top,.producer-card-footer { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.producer-card-label,.producer-card-number,.producer-card-footer,.producer-contact-heading {
+  font-size:clamp(7px,1.2vw,10px); font-weight:850; letter-spacing:.15em;
+}
+.producer-card-label { color:#c6baff; }
+.producer-card-number { color:rgba(232,228,255,.48); text-align:right; }
+.producer-card-main { display:flex; align-items:center; gap:clamp(12px,3vw,24px); min-width:0; }
+.producer-card-photo-wrap {
+  position:relative; flex:0 0 32%; max-width:140px; aspect-ratio:4/5; overflow:hidden;
+  border:1px solid rgba(222,214,255,.25); border-radius:12px;
+  background:linear-gradient(145deg,#3a3268,#17182a);
+  box-shadow:0 14px 35px rgba(0,0,0,.25);
+}
+.producer-card-photo-wrap img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.producer-photo-placeholder { position:absolute; inset:0; display:grid; place-items:center; color:#c6baff; font-size:clamp(28px,7vw,55px); background:linear-gradient(145deg,rgba(140,121,255,.22),rgba(255,255,255,.025)); }
+.producer-photo-placeholder[hidden] { display:none !important; }
+.producer-info-copy { min-width:0; overflow-wrap:anywhere; }
+.producer-info-copy .eyebrow { display:block; color:#b5a5ff; font-size:clamp(7px,1.1vw,9px); letter-spacing:.2em; }
+.producer-info-copy h2 { margin:8px 0 9px; color:#fff; font:850 clamp(21px,4.5vw,38px)/1.02 Manrope,sans-serif; letter-spacing:-.055em; overflow-wrap:anywhere; }
+.producer-role { margin:0; color:#aaa4cb; font-size:clamp(8px,1.25vw,10px); font-weight:850; letter-spacing:.18em; }
+.producer-card-details { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.producer-detail { min-width:0; padding:10px 12px; border:1px solid rgba(215,205,255,.13); border-radius:10px; background:rgba(255,255,255,.035); }
+.producer-detail span,.producer-contact-row > span { display:block; margin-bottom:5px; color:#a89ccf; font-size:8px; font-weight:850; letter-spacing:.16em; }
+.producer-detail strong { display:block; color:#f1efff; font-size:clamp(10px,1.55vw,13px); line-height:1.35; overflow-wrap:anywhere; }
+.producer-card-contact { display:grid; gap:7px; }
+.producer-contact-heading { color:#b5a5ff; }
+.producer-contact-row { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid rgba(215,205,255,.11); }
+.producer-contact-row[hidden] { display:none !important; }
+.producer-contact-row > span { margin:0; flex:0 0 48px; }
+.producer-contact-row a { min-width:0; color:#f4f0ff; text-decoration:none; font-size:clamp(10px,1.5vw,12px); overflow-wrap:anywhere; text-align:right; }
+.producer-contact-row a:hover { color:#c9bdff; }
+.producer-card-footer { padding-top:8px; border-top:1px solid rgba(215,205,255,.14); color:rgba(232,228,255,.42); }
+@media(max-width:520px) {
+  .producer-info-card { padding:13px; gap:9px; }
+  .producer-card-top { gap:6px; }
+  .producer-card-label,.producer-card-number { font-size:7px; letter-spacing:.1em; }
+  .producer-card-main { gap:12px; }
+  .producer-card-photo-wrap { flex-basis:30%; max-width:94px; border-radius:9px; }
+  .producer-info-copy h2 { font-size:clamp(18px,5.2vw,25px); }
+  .producer-card-details { gap:7px; }
+  .producer-detail { padding:8px; }
+  .producer-contact-row { align-items:flex-start; }
+}
+@media(prefers-reduced-motion:reduce) { .producer-info-card * { scroll-behavior:auto; } }
